@@ -15,3 +15,4 @@
 - My main objection is to create a user's current portfolio and show it above this page and check real time data, as often as possible.
 - I would very much like to use coin logos to make it easier for everyone to follow this portfolio.
 - Below this page, I also want to implement top n cryptocurrencies by volume and their daily gains/losses.
+- Per my first evaluation, I would like to use CoinGecko's API as I find it the most structured one for the needs of this project
