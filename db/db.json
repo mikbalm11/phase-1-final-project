@@ -196,7 +196,7 @@
         {
           "id": "chainlink",
           "name": "Chainlink",
-          "amount": 1500
+          "amount": 1400
         }
       ]
     },
@@ -257,7 +257,13 @@
     },
     {
       "id": "kpx8paECkEdP093a3a3dQUr9dxmYTlnmBo",
-      "cryptocurrencies": []
+      "cryptocurrencies": [
+        {
+          "id": "bitcoin",
+          "name": "Bitcoin",
+          "amount": 1
+        }
+      ]
     }
   ]
 }

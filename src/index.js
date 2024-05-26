@@ -1,12 +1,15 @@
+// Define the API URL for CoinGecko
 const API_URL = 'https://api.coingecko.com/api/v3';
 
+// Event listener to load pages on DOM content load
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('home').addEventListener('click', () => loadPage('home'));
     document.getElementById('portfolio').addEventListener('click', () => loadPage('portfolio'));
-    loadPage('home'); // Load the home page by default
+    //loadPage('home'); // Load the home page by default - best to have this omitted as too many requests end api conn
 });
 
 async function fetchData(apiUrl) {
+    // Function to fetch data from an API
     try {
         const response = await fetch(apiUrl);
         if (!response.ok) {
@@ -19,7 +22,295 @@ async function fetchData(apiUrl) {
     }
 }
 
+async function loadPortfolio(wallId = null) {
+    // Function to load portfolio based on wallet ID - GET
+    // Retrieves from either updatePortfolio - parameter, or retrieve button - element
+    let walletId;
+    if (wallId) {
+        walletId = wallId;
+    } else {
+        walletId = document.getElementById('walletIdInput').value.trim();
+    }
+    if (walletId) {
+        try {
+            const response = await fetch(`http://localhost:3000/portfolios`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch portfolio data');
+            }
+            const portfolios = await response.json();
+
+            // Find the portfolio object with the matching walletId
+            const portfolio = portfolios.find(portfolio => portfolio.id === walletId);
+
+            if (portfolio) {
+                // Portfolio found but it's empty :(
+                const portfolioTable = document.getElementById('portfolioTable');
+                if (portfolio.cryptocurrencies.length === 0) {
+                    portfolioTable.innerHTML = '<p>This wallet has no cryptocurrencies yet.</p>';
+                    return;
+                } else {
+                    // Portfolio found, display its cryptocurrencies
+                    const cryptoData = await fetchData(`${API_URL}/coins/markets?vs_currency=usd`);
+
+                    let totalValue = 0;
+                    const table = document.createElement('table');
+                    table.innerHTML = `
+                      <thead>
+                        <tr>
+                          <br>
+                          <div>Retrieving Wallet ID: ${walletId} successful.</div>
+                          <th>Name</th>
+                          <th>Amount</th>
+                          <th>Current Price (USD)</th>
+                          <th>Value (USD)</th>
+                          <th>Daily Change (%)</th>
+                        </tr>
+                      </thead>
+                      <tbody id="portfolioTableBody"></tbody>
+                    `;
+                    const tableBody = table.querySelector('tbody');
+
+                    portfolio.cryptocurrencies.forEach(crypto => {
+                        const cryptoInfo = cryptoData.find(item => item.id === crypto.id);
+                        if (cryptoInfo) {
+                            const price = parseFloat(cryptoInfo.current_price);
+                            const changePercent = parseFloat(cryptoInfo.price_change_percentage_24h).toFixed(2);
+                            const value = (crypto.amount * price).toFixed(2);
+                            totalValue += parseFloat(value);
+
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                              <td><img src=${cryptoInfo.image} alt="${cryptoInfo.symbol}"> ${crypto.name}</td>
+                              <td>${crypto.amount}</td>
+                              <td>$${price.toFixed(2)}</td>
+                              <td>$${value}</td>
+                              <td class="${getChangeClass(changePercent)}">${changePercent}%</td>
+                            `;
+                            tableBody.appendChild(row);
+                        }
+                    });
+
+                    portfolioTable.innerHTML = '';
+                    portfolioTable.appendChild(table);
+                    portfolioTable.innerHTML += `<h4>Total Portfolio Value: $${totalValue.toFixed(2)}</h4>`;
+                }
+            } else {
+                // Portfolio not found
+                const portfolioTable = document.getElementById('portfolioTable');
+                portfolioTable.innerHTML = `<p>No portfolio found for the provided wallet ID.</p>`;
+            }
+
+        } catch (error) {
+            console.error('Error loading portfolio:', error);
+        }
+    } else {
+        const portfolioTable = document.getElementById('portfolioTable');
+        portfolioTable.innerHTML = `<p>Input field cannot be empty. Please enter a valid wallet ID.</p>`;
+    }
+}
+
+function addPortfolio() {
+    // Function to add a new portfolio - POST
+    const walletIdInput = document.getElementById('newWalletIdInput');
+    let walletId = walletIdInput.value.trim();
+
+    // If no wallet ID is provided, generate a random one
+    if (!walletId || walletId.length !== 34) {
+        walletId = generateRandomWalletId();
+        document.getElementById('generatedWalletId').textContent = `Generated Wallet ID: ${walletId}`;
+    }
+
+    const newPortfolio = {
+        id: walletId,
+        cryptocurrencies: []
+    };
+
+    try {
+        fetch('http://localhost:3000/portfolios', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newPortfolio),
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to add portfolio');
+            }
+        }).catch(error => {
+            console.error('Error adding portfolio:', error);
+        });
+    } catch (error) {
+        console.error('Error adding portfolio:', error);
+    }
+}
+
+function getChangeClass(changePercent) {
+    // Function to determine CSS class for displaying change
+    if (changePercent > 0) {
+        return 'positive-change';
+    } else if (changePercent < 0) {
+        return 'negative-change';
+    } else {
+        return 'no-change';
+    }
+}
+
+function generateRandomWalletId() {
+    // Function to generate a random wallet ID
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const length = 34;
+    let randomId = '';
+    for (let i = 0; i < length; i++) {
+        randomId += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return randomId;
+}
+
+async function updatePortfolio(walletId) {
+    // Function to update portfolio with new cryptocurrency - PUT
+    const select = document.getElementById('cryptoSelect');
+    const amount = parseFloat(document.getElementById('cryptoAmount').value.trim());
+    const cryptoId = select.value;
+    const cryptoName = select.options[select.selectedIndex].text;
+
+    if (!cryptoId || isNaN(amount) || amount <= 0) {
+        const updatedWalletId = document.getElementById('updatedWalletId');
+        updatedWalletId.innerHTML = "Please enter a valid amount.";
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:3000/portfolios`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch portfolios');
+        }
+        const portfolios = await response.json();
+        const portfolio = portfolios.find(portfolio => portfolio.id === walletId);
+
+        if (portfolio) {
+            const existingCrypto = portfolio.cryptocurrencies.find(crypto => crypto.id === cryptoId);
+            if (existingCrypto) {
+                existingCrypto.amount += amount;
+            } else {
+                portfolio.cryptocurrencies.push({ id: cryptoId, name: cryptoName, amount });
+            }
+
+            const updateResponse = await fetch(`http://localhost:3000/portfolios/${walletId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(portfolio),
+            });
+
+            if (!updateResponse.ok) {
+                throw new Error('Failed to update portfolio');
+            }
+
+            const updatedWalletId = document.getElementById('updatedWalletId');
+            updatedWalletId.innerHTML = "Portfolio updated successfully.";
+            loadPortfolio(walletId);
+        } else {
+            const updatedWalletId = document.getElementById('updatedWalletId');
+            updatedWalletId.innerHTML = "Wallet ID is not found. Please enter a valid wallet ID.";
+        }
+    } catch (error) {
+        console.error('Error updating portfolio:', error);
+    }
+}
+
+async function displayUpdateForm(portfolio) {
+    // Function to add options to the select element for each cryptocurrency
+    const updateForm = document.getElementById('updateForm');
+    updateForm.innerHTML = `
+        <p>Select Cryptocurrency:</p>
+        <select id="cryptoSelect"></select>
+        <p>Enter Amount:</p>
+        <input type="number" id="cryptoAmount" placeholder="Enter Amount">
+        <button id="updateCryptoBtn">Update Cryptocurrency</button>
+    `;
+
+    const data = await fetchData(`${API_URL}/coins/markets?vs_currency=usd`);
+    const cryptoSelect = document.getElementById('cryptoSelect');
+
+    data.slice(0, 20).forEach(crypto => {
+        const option = document.createElement('option');
+        option.value = crypto.id;
+        option.text = crypto.name;
+        cryptoSelect.appendChild(option);
+    });
+
+    document.getElementById('updateCryptoBtn').addEventListener('click', () => updatePortfolio(portfolio.id));
+}
+
+async function checkWalletId() {
+    // Function to check if wallet ID exists before updating portfolio
+    const walletId = document.getElementById('modWalletIdInput').value.trim();
+    if (!walletId) {
+        const portfolioTable = document.getElementById('portfolioTable');
+        portfolioTable.innerHTML = "Wallet ID is not found. Please enter a valid wallet ID.";
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:3000/portfolios`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch portfolios');
+        }
+        const portfolios = await response.json();
+        const portfolio = portfolios.find(portfolio => portfolio.id === walletId);
+
+        if (portfolio) {
+            displayUpdateForm(portfolio);
+        } else {
+            const updatedWalletId = document.getElementById('updatedWalletId');
+            updatedWalletId.innerHTML = "Wallet ID is not found. Please enter a valid wallet ID.";
+        }
+    } catch (error) {
+        console.error('Error checking wallet ID:', error);
+    }
+}
+
+async function deletePortfolio() {
+    // Function to delete a portfolio - DELETE
+    const walletIdInput = document.getElementById('voidWalletIdInput');
+    const walletId = walletIdInput.value.trim();
+    const deletionStatus = document.getElementById('deletionStatus');
+
+    if (!walletId) {
+        deletionStatus.textContent = 'Please enter a wallet ID.';
+        return;
+    }
+
+    try {
+        const response = await fetch('http://localhost:3000/portfolios');
+        if (!response.ok) {
+            throw new Error('Failed to fetch portfolios');
+        }
+        const portfolios = await response.json();
+
+        const portfolioExists = portfolios.some(portfolio => portfolio.id === walletId);
+        if (!portfolioExists) {
+            deletionStatus.textContent = 'Portfolio not found.';
+            return;
+        }
+
+        const deleteResponse = await fetch(`http://localhost:3000/portfolios/${walletId}`, {
+            method: 'DELETE',
+        });
+        if (!deleteResponse.ok) {
+            throw new Error('Failed to delete portfolio');
+        }
+
+        deletionStatus.textContent = 'Portfolio deleted successfully!';
+    } catch (error) {
+        console.error('Error deleting portfolio:', error);
+        deletionStatus.textContent = 'An error occurred while deleting the portfolio.';
+    }
+}
+
 async function loadPage(page) {
+    // Function to load pages based on page selection home or portfolio
     const content = document.getElementById('content');
     if (page === 'home') {
         content.innerHTML = `
@@ -72,7 +363,7 @@ async function loadPage(page) {
         <input type="text" id="modWalletIdInput" placeholder="Enter Wallet ID">
         <button id="modifyPortfolioBtn">Update Portfolio</button>
         <div id="updateForm"></div>
-        <div id="generatedWalletId"></div>
+        <div id="updatedWalletId"></div>
 
         <h2>Delete Portfolio</h2>
         <p>Enter wallet ID:</p>
@@ -81,282 +372,14 @@ async function loadPage(page) {
         <div id="deletionStatus"></div>
       `;
 
-        document.getElementById('retrievePortfolioBtn').addEventListener('click', loadPortfolio);
+        document.getElementById('retrievePortfolioBtn').addEventListener('click', () => {
+            // Retrieve the wallet ID
+            const walletId = document.getElementById('walletIdInput').value.trim();
+            // Call loadPortfolio with the retrieved wallet ID
+            loadPortfolio(walletId);
+        });
         document.getElementById('addPortfolioBtn').addEventListener('click', addPortfolio);
         document.getElementById('modifyPortfolioBtn').addEventListener('click', checkWalletId);
         document.getElementById('deletePortfolioBtn').addEventListener('click', deletePortfolio);
-    }
-}
-
-async function checkWalletId() {
-    const walletId = document.getElementById('modWalletIdInput').value.trim();
-    if (!walletId) {
-        alert('Please enter a wallet ID.');
-        return;
-    }
-
-    try {
-        const response = await fetch(`http://localhost:3000/portfolios`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch portfolios');
-        }
-        const portfolios = await response.json();
-        const portfolio = portfolios.find(portfolio => portfolio.id === walletId);
-
-        if (portfolio) {
-            displayUpdateForm(portfolio);
-        } else {
-            alert('Wallet ID not found.');
-        }
-    } catch (error) {
-        console.error('Error checking wallet ID:', error);
-    }
-}
-
-async function deletePortfolio() {
-    const walletIdInput = document.getElementById('voidWalletIdInput');
-    const walletId = walletIdInput.value.trim();
-    const deletionStatus = document.getElementById('deletionStatus');
-
-    if (!walletId) {
-        deletionStatus.textContent = 'Please enter a wallet ID.';
-        return;
-    }
-
-    try {
-        const response = await fetch('http://localhost:3000/portfolios');
-        if (!response.ok) {
-            throw new Error('Failed to fetch portfolios');
-        }
-        const portfolios = await response.json();
-        
-        const portfolioExists = portfolios.some(portfolio => portfolio.id === walletId);
-        if (!portfolioExists) {
-            deletionStatus.textContent = 'Portfolio not found.';
-            return;
-        }
-
-        const deleteResponse = await fetch(`http://localhost:3000/portfolios/${walletId}`, {
-            method: 'DELETE',
-        });
-        if (!deleteResponse.ok) {
-            throw new Error('Failed to delete portfolio');
-        }
-
-        deletionStatus.textContent = 'Portfolio deleted successfully!';
-        // Optionally, you might want to reload the page or perform other actions after deletion
-    } catch (error) {
-        console.error('Error deleting portfolio:', error);
-        deletionStatus.textContent = 'An error occurred while deleting the portfolio.';
-    }
-}
-
-async function displayUpdateForm(portfolio) {
-    const updateForm = document.getElementById('updateForm');
-    updateForm.innerHTML = `
-        <p>Select Cryptocurrency:</p>
-        <select id="cryptoSelect"></select>
-        <p>Enter Amount:</p>
-        <input type="number" id="cryptoAmount" placeholder="Enter Amount">
-        <button id="updateCryptoBtn">Update Cryptocurrency</button>
-    `;
-
-    const data = await fetchData(`${API_URL}/coins/markets?vs_currency=usd`);
-    const cryptoSelect = document.getElementById('cryptoSelect');
-
-    data.slice(0, 20).forEach(crypto => {
-        const option = document.createElement('option');
-        option.value = crypto.id;
-        option.text = crypto.name;
-        cryptoSelect.appendChild(option);
-    });
-
-    document.getElementById('updateCryptoBtn').addEventListener('click', () => updatePortfolio(portfolio.id));
-}
-
-function addPortfolio() {
-    const walletIdInput = document.getElementById('newWalletIdInput');
-    let walletId = walletIdInput.value.trim();
-
-    // If no wallet ID is provided, generate a random one
-    if (!walletId || walletId.length !== 34) {
-        walletId = generateRandomWalletId();
-        document.getElementById('generatedWalletId').textContent = `Generated Wallet ID: ${walletId}`;
-    }
-
-    const newPortfolio = {
-        id: walletId,
-        cryptocurrencies: []
-    };
-
-    try {
-        fetch('http://localhost:3000/portfolios', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newPortfolio),
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to add portfolio');
-            }
-        }).catch(error => {
-            console.error('Error adding portfolio:', error);
-        });
-    } catch (error) {
-        console.error('Error adding portfolio:', error);
-    }
-}
-
-
-function generateRandomWalletId() {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const length = 34;
-    let randomId = '';
-    for (let i = 0; i < length; i++) {
-        randomId += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return randomId;
-}
-
-async function updatePortfolio(walletId) {
-    const select = document.getElementById('cryptoSelect');
-    const amount = parseFloat(document.getElementById('cryptoAmount').value.trim());
-    const cryptoId = select.value;
-    const cryptoName = select.options[select.selectedIndex].text;
-
-    if (!cryptoId || isNaN(amount) || amount <= 0) {
-        alert('Please select a valid cryptocurrency and enter a valid amount.');
-        return;
-    }
-
-    try {
-        const response = await fetch(`http://localhost:3000/portfolios`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch portfolios');
-        }
-        const portfolios = await response.json();
-        const portfolio = portfolios.find(portfolio => portfolio.id === walletId);
-
-        if (portfolio) {
-            const existingCrypto = portfolio.cryptocurrencies.find(crypto => crypto.id === cryptoId);
-            if (existingCrypto) {
-                existingCrypto.amount += amount;
-            } else {
-                portfolio.cryptocurrencies.push({ id: cryptoId, name: cryptoName, amount });
-            }
-
-            const updateResponse = await fetch(`http://localhost:3000/portfolios/${walletId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(portfolio),
-            });
-
-            if (!updateResponse.ok) {
-                throw new Error('Failed to update portfolio');
-            }
-
-            alert('Portfolio updated successfully!');
-            loadPortfolio(walletId);
-        } else {
-            alert('Wallet ID not found.');
-        }
-    } catch (error) {
-        console.error('Error updating portfolio:', error);
-    }
-}
-
-async function loadPortfolio(wallId = null) {
-    let walletId;
-    if (!wallId) {
-        walletId = wallId;
-    } else {
-        walletId = document.getElementById('walletIdInput').value.trim();
-    }
-    if (walletId) {
-        try {
-            const response = await fetch(`http://localhost:3000/portfolios`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch portfolio data');
-            }
-            const portfolios = await response.json();
-
-            // Find the portfolio object with the matching walletId
-            const portfolio = portfolios.find(portfolio => portfolio.id === walletId);
-
-            if (portfolio) {
-                // Portfolio found but it's empty
-                const portfolioTable = document.getElementById('portfolioTable');
-                if (portfolio.cryptocurrencies.length === 0) {
-                    portfolioTable.innerHTML = '<p>This wallet has no cryptocurrencies yet.</p>';
-                    return;
-                } else {
-                    // Portfolio found, display its cryptocurrencies
-                    const cryptoData = await fetchData(`${API_URL}/coins/markets?vs_currency=usd`);
-
-                    let totalValue = 0;
-                    const table = document.createElement('table');
-                    table.innerHTML = `
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Amount</th>
-                          <th>Current Price (USD)</th>
-                          <th>Value (USD)</th>
-                          <th>Daily Change (%)</th>
-                        </tr>
-                      </thead>
-                      <tbody id="portfolioTableBody"></tbody>
-                    `;
-                    const tableBody = table.querySelector('tbody');
-
-                    portfolio.cryptocurrencies.forEach(crypto => {
-                        const cryptoInfo = cryptoData.find(item => item.id === crypto.id);
-                        if (cryptoInfo) {
-                            const price = parseFloat(cryptoInfo.current_price);
-                            const changePercent = parseFloat(cryptoInfo.price_change_percentage_24h).toFixed(2);
-                            const value = (crypto.amount * price).toFixed(2);
-                            totalValue += parseFloat(value);
-
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                              <td><img src=${cryptoInfo.image} alt="${cryptoInfo.symbol}"> ${crypto.name}</td>
-                              <td>${crypto.amount}</td>
-                              <td>$${price.toFixed(2)}</td>
-                              <td>$${value}</td>
-                              <td class="${getChangeClass(changePercent)}">${changePercent}%</td>
-                            `;
-                            tableBody.appendChild(row);
-                        }
-                    });
-
-                    portfolioTable.innerHTML = '';
-                    portfolioTable.appendChild(table);
-                    portfolioTable.innerHTML += `<h4>Total Portfolio Value: $${totalValue.toFixed(2)}</h4>`;
-                }
-            } else {
-                // Portfolio not found
-                const portfolioTable = document.getElementById('portfolioTable');
-                portfolioTable.innerHTML = `<p>No portfolio found for the provided wallet ID: ${walletId}.</p>`;
-            }
-
-        } catch (error) {
-            console.error('Error loading portfolio:', error);
-        }
-    } else {
-        const portfolioTable = document.getElementById('portfolioTable');
-        portfolioTable.innerHTML = `<p>Input field cannot be empty. Please enter a valid wallet ID.</p>`;
-    }
-}
-
-function getChangeClass(changePercent) {
-    if (changePercent > 0) {
-        return 'positive-change';
-    } else if (changePercent < 0) {
-        return 'negative-change';
-    } else {
-        return 'no-change';
     }
 }

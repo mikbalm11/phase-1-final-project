@@ -1,16 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@400;700&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Miriam Libre', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f8f9fa;
-    color: #343a40;
+    background-color: #1e1e1e;
+    color: #d0d0d0;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 header,
 footer {
-    background-color: #343a40;
-    color: #ffffff;
+    background-color: #141414;
+    color: rgb(154, 119, 35);
     text-align: center;
     padding: 1em 0;
 }
@@ -33,18 +38,21 @@ nav ul li {
 }
 
 nav ul li a {
-    color: #ffffff;
+    color: rgb(154, 119, 35);
     text-decoration: none;
+    transition: color 0.3s;
 }
 
 nav ul li a:hover {
-    text-decoration: underline;
+    color: #1e90ff;
+    text-decoration: none;
 }
 
 #content {
     padding: 2em;
     max-width: 1200px;
     margin: 0 auto;
+    flex: 1;
 }
 
 @media (max-width: 600px) {
@@ -61,52 +69,56 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin: 2em 0;
+    background-color: #292929;
 }
 
 table,
 th,
 td {
-    border: 1px solid #dee2e6;
+    border: 1px solid #444;
 }
 
 th,
 td {
     padding: 0.75em;
     text-align: left;
+    color: #d0d0d0;
 }
 
 th {
-    background-color: #e9ecef;
+    background-color: #333;
 }
 
 tr:nth-child(even) {
-    background-color: #f8f9fa;
+    background-color: #242424;
 }
 
 .positive-change {
-    color: green;
+    color: #00ff00;
 }
 
 .negative-change {
-    color: red;
+    color: #ff3333;
 }
 
 .no-change {
-    color: gray;
+    color: #808080;
 }
 
 button {
-    background-color: #007bff;
+    background-color: #1e90ff;
     color: #ffffff;
     border: none;
     padding: 0.5em 1em;
     cursor: pointer;
     border-radius: 4px;
     font-size: 1em;
+    transition: background-color 0.3s, transform 0.3s;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: rgb(154, 119, 35);
+    transform: scale(1.05);
 }
 
 form {
@@ -114,36 +126,42 @@ form {
 }
 
 form input[type="text"],
-form input[type="number"] {
+form input[type="number"],
+form select {
     padding: 0.5em;
-    border: 1px solid #ced4da;
+    border: 1px solid #333;
     border-radius: 4px;
     font-size: 1em;
-    width: calc(100% - 1.2em);
+    width: calc(100% - 2em);
     margin-bottom: 1em;
+    background-color: #292929;
+    color: #d0d0d0;
 }
 
 form label {
     font-weight: bold;
     margin-bottom: 0.5em;
     display: block;
+    color: rgb(154, 119, 35);
 }
 
 .card {
-    background-color: #ffffff;
-    border: 1px solid #dee2e6;
+    background-color: #1e1e1e;
+    border: 1px solid #444;
     border-radius: 4px;
     padding: 1em;
     margin-bottom: 2em;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .card h2 {
     margin-top: 0;
+    color: #00ffcc;
 }
 
 .loader {
-    border: 6px solid #f3f3f3;
-    border-top: 6px solid #007bff;
+    border: 6px solid #333;
+    border-top: 6px solid rgb(154, 119, 35);
     border-radius: 50%;
     width: 30px;
     height: 30px;
@@ -155,7 +173,6 @@ form label {
     0% {
         transform: rotate(0deg);
     }
-
     100% {
         transform: rotate(360deg);
     }
@@ -164,4 +181,29 @@ form label {
 img {
     width: 17px;
     height: 17px;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+img#logo {
+    width: 50px;
+    height: 50px;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+h2, h3, h4 {
+    color: rgb(154, 119, 35);
+    margin-bottom: 0.5em;
+}
+
+.alert {
+    color: #ff3333;
+    font-weight: bold;
+    margin: 1em 0;
+}
+
+::selection {
+    background-color: #00ff80;
+    color: #1e1e1e;
 }
