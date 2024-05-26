@@ -1,174 +1,263 @@
 {
-    "portfolios": [
-      {
-        "id": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
-        "cryptocurrencies": [
-          {
-            "id": "bitcoin",
-            "name": "Bitcoin",
-            "symbol": "btc",
-            "amount": 0.5
-          },
-          {
-            "id": "ethereum",
-            "name": "Ethereum",
-            "symbol": "eth",
-            "amount": 10
-          }
-        ]
-      },
-      {
-        "id": "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2",
-        "cryptocurrencies": [
-          {
-            "id": "ripple",
-            "name": "Ripple",
-            "symbol": "xrp",
-            "amount": 3000
-          },
-          {
-            "id": "litecoin",
-            "name": "Litecoin",
-            "symbol": "ltc",
-            "amount": 100
-          }
-        ]
-      },
-      {
-        "id": "1Cz6vnQXaMq6WErcYrtMKP4GBRG4LVq5J2",
-        "cryptocurrencies": [
-          {
-            "id": "cardano",
-            "name": "Cardano",
-            "symbol": "ada",
-            "amount": 5000
-          },
-          {
-            "id": "polkadot",
-            "name": "Polkadot",
-            "symbol": "dot",
-            "amount": 200
-          }
-        ]
-      },
-      {
-        "id": "1DgMsJ3DdFwHZhQgD6Rf1hfGgV39sYp3Vn",
-        "cryptocurrencies": [
-          {
-            "id": "chainlink",
-            "name": "Chainlink",
-            "symbol": "link",
-            "amount": 150
-          },
-          {
-            "id": "stellar",
-            "name": "Stellar",
-            "symbol": "xlm",
-            "amount": 10000
-          }
-        ]
-      },
-      {
-        "id": "1EfD2C9gFrKwBpGgPgPybNyTW1jX5sX7BM",
-        "cryptocurrencies": [
-          {
-            "id": "binancecoin",
-            "name": "Binance Coin",
-            "symbol": "bnb",
-            "amount": 20
-          },
-          {
-            "id": "dogecoin",
-            "name": "Dogecoin",
-            "symbol": "doge",
-            "amount": 100000
-          }
-        ]
-      },
-      {
-        "id": "1FG6nSYaV29FpJmLUpR1hhwVt3dHBnZPLp",
-        "cryptocurrencies": [
-          {
-            "id": "uniswap",
-            "name": "Uniswap",
-            "symbol": "uni",
-            "amount": 300
-          },
-          {
-            "id": "solana",
-            "name": "Solana",
-            "symbol": "sol",
-            "amount": 50
-          }
-        ]
-      },
-      {
-        "id": "1GHCv7FMeHnZfEtGQ8LXGzvR5r5n8Ev6b9",
-        "cryptocurrencies": [
-          {
-            "id": "vechain",
-            "name": "VeChain",
-            "symbol": "vet",
-            "amount": 20000
-          },
-          {
-            "id": "avalanche-2",
-            "name": "Avalanche",
-            "symbol": "avax",
-            "amount": 150
-          }
-        ]
-      },
-      {
-        "id": "1HBbTjBQzzTqF4TVTLB7RZrh1bThA5X9ft",
-        "cryptocurrencies": [
-          {
-            "id": "monero",
-            "name": "Monero",
-            "symbol": "xmr",
-            "amount": 50
-          },
-          {
-            "id": "terra-luna",
-            "name": "Terra",
-            "symbol": "luna",
-            "amount": 500
-          }
-        ]
-      },
-      {
-        "id": "1J9G8HsD4LF4K8x4d5FYm1CfCrZ1CmMx5N",
-        "cryptocurrencies": [
-          {
-            "id": "cosmos",
-            "name": "Cosmos",
-            "symbol": "atom",
-            "amount": 100
-          },
-          {
-            "id": "algorand",
-            "name": "Algorand",
-            "symbol": "algo",
-            "amount": 1000
-          }
-        ]
-      },
-      {
-        "id": "1K3RbKFk2VQHD2q8LFRDdQk2GPP4eMvA1j",
-        "cryptocurrencies": [
-          {
-            "id": "tezos",
-            "name": "Tezos",
-            "symbol": "xtz",
-            "amount": 200
-          },
-          {
-            "id": "maker",
-            "name": "Maker",
-            "symbol": "mkr",
-            "amount": 10
-          }
-        ]
-      }
-    ]
-  }
+  "portfolios": [
+    {
+      "id": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+      "cryptocurrencies": [
+        {
+          "id": "bitcoin",
+          "name": "Bitcoin",
+          "symbol": "btc",
+          "amount": 0.5
+        },
+        {
+          "id": "ethereum",
+          "name": "Ethereum",
+          "symbol": "eth",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "id": "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2",
+      "cryptocurrencies": [
+        {
+          "id": "ripple",
+          "name": "Ripple",
+          "symbol": "xrp",
+          "amount": 3000
+        },
+        {
+          "id": "litecoin",
+          "name": "Litecoin",
+          "symbol": "ltc",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": "1Cz6vnQXaMq6WErcYrtMKP4GBRG4LVq5J2",
+      "cryptocurrencies": [
+        {
+          "id": "cardano",
+          "name": "Cardano",
+          "symbol": "ada",
+          "amount": 5000
+        },
+        {
+          "id": "polkadot",
+          "name": "Polkadot",
+          "symbol": "dot",
+          "amount": 200
+        },
+        {
+          "id": "bitcoin",
+          "name": "Bitcoin",
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "id": "1DgMsJ3DdFwHZhQgD6Rf1hfGgV39sYp3Vn",
+      "cryptocurrencies": [
+        {
+          "id": "chainlink",
+          "name": "Chainlink",
+          "symbol": "link",
+          "amount": 150
+        },
+        {
+          "id": "stellar",
+          "name": "Stellar",
+          "symbol": "xlm",
+          "amount": 10000
+        }
+      ]
+    },
+    {
+      "id": "1EfD2C9gFrKwBpGgPgPybNyTW1jX5sX7BM",
+      "cryptocurrencies": [
+        {
+          "id": "binancecoin",
+          "name": "Binance Coin",
+          "symbol": "bnb",
+          "amount": 20
+        },
+        {
+          "id": "dogecoin",
+          "name": "Dogecoin",
+          "symbol": "doge",
+          "amount": 100000
+        }
+      ]
+    },
+    {
+      "id": "1FG6nSYaV29FpJmLUpR1hhwVt3dHBnZPLp",
+      "cryptocurrencies": [
+        {
+          "id": "uniswap",
+          "name": "Uniswap",
+          "symbol": "uni",
+          "amount": 300
+        },
+        {
+          "id": "solana",
+          "name": "Solana",
+          "symbol": "sol",
+          "amount": 50
+        },
+        {
+          "id": "dogecoin",
+          "name": "Dogecoin",
+          "amount": 1000000
+        }
+      ]
+    },
+    {
+      "id": "1GHCv7FMeHnZfEtGQ8LXGzvR5r5n8Ev6b9",
+      "cryptocurrencies": [
+        {
+          "id": "vechain",
+          "name": "VeChain",
+          "symbol": "vet",
+          "amount": 20000
+        },
+        {
+          "id": "avalanche-2",
+          "name": "Avalanche",
+          "symbol": "avax",
+          "amount": 150
+        }
+      ]
+    },
+    {
+      "id": "1HBbTjBQzzTqF4TVTLB7RZrh1bThA5X9ft",
+      "cryptocurrencies": [
+        {
+          "id": "monero",
+          "name": "Monero",
+          "symbol": "xmr",
+          "amount": 50
+        },
+        {
+          "id": "terra-luna",
+          "name": "Terra",
+          "symbol": "luna",
+          "amount": 500
+        }
+      ]
+    },
+    {
+      "id": "1J9G8HsD4LF4K8x4d5FYm1CfCrZ1CmMx5N",
+      "cryptocurrencies": [
+        {
+          "id": "cosmos",
+          "name": "Cosmos",
+          "symbol": "atom",
+          "amount": 100
+        },
+        {
+          "id": "algorand",
+          "name": "Algorand",
+          "symbol": "algo",
+          "amount": 1000
+        }
+      ]
+    },
+    {
+      "id": "1K3RbKFk2VQHD2q8LFRDdQk2GPP4eMvA1j",
+      "cryptocurrencies": [
+        {
+          "id": "tezos",
+          "name": "Tezos",
+          "symbol": "xtz",
+          "amount": 200
+        },
+        {
+          "id": "maker",
+          "name": "Maker",
+          "symbol": "mkr",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "id": "vPVaIVzX6vvKfNoRHEXkAGjLn8PUvP7fpM",
+      "cryptocurrencies": [
+        {
+          "id": "bitcoin",
+          "name": "Bitcoin",
+          "amount": 25
+        },
+        {
+          "id": "ripple",
+          "name": "XRP",
+          "amount": 150000
+        },
+        {
+          "id": "chainlink",
+          "name": "Chainlink",
+          "amount": 1500
+        }
+      ]
+    },
+    {
+      "id": "fSNRSNLo14To7oeTVurDAklCn3NJ5aDmMA",
+      "cryptocurrencies": [
+        {
+          "id": "bitcoin",
+          "name": "Bitcoin",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "id": "7J94aTSOYvXTq7pIQs6rcNQLUF5KuqOS5d",
+      "cryptocurrencies": [
+        {
+          "id": "tron",
+          "name": "TRON",
+          "amount": 500
+        }
+      ]
+    },
+    {
+      "id": "M9sLzWNlBpUV2XsJmHlAyfcqxRImB2Zl9b",
+      "cryptocurrencies": [
+        {
+          "id": "bitcoin",
+          "name": "Bitcoin",
+          "amount": 1
+        },
+        {
+          "id": "ethereum",
+          "name": "Ethereum",
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "id": "bwrj97oqmCzhpo1bAIFylsp7iz3tlIQi6U",
+      "cryptocurrencies": [
+        {
+          "id": "bitcoin",
+          "name": "Bitcoin",
+          "amount": 12
+        },
+        {
+          "id": "binancecoin",
+          "name": "BNB",
+          "amount": 1111
+        },
+        {
+          "id": "solana",
+          "name": "Solana",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": "kpx8paECkEdP093a3a3dQUr9dxmYTlnmBo",
+      "cryptocurrencies": []
+    }
+  ]
+}
