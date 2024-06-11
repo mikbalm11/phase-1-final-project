@@ -1,4 +1,110 @@
 {
+  "upvoteCount": [
+    {
+      "upvotes": 11,
+      "id": "btc"
+    },
+    {
+      "upvotes": 5,
+      "id": "eth"
+    },
+    {
+      "upvotes": 4,
+      "id": "usdt"
+    },
+    {
+      "upvotes": 2,
+      "id": "bnb"
+    },
+    {
+      "upvotes": 4,
+      "id": "usdc"
+    },
+    {
+      "upvotes": 3,
+      "id": "xrp"
+    },
+    {
+      "upvotes": 3,
+      "id": "ada"
+    },
+    {
+      "upvotes": 4,
+      "id": "steth"
+    },
+    {
+      "upvotes": 4,
+      "id": "doge"
+    },
+    {
+      "upvotes": 4,
+      "id": "sol"
+    },
+    {
+      "id": "matic",
+      "upvotes": 0
+    },
+    {
+      "upvotes": 3,
+      "id": "dot"
+    },
+    {
+      "id": "ltc",
+      "upvotes": 0
+    },
+    {
+      "upvotes": 4,
+      "id": "shib"
+    },
+    {
+      "upvotes": 5,
+      "id": "trx"
+    },
+    {
+      "upvotes": 5,
+      "id": "wbtc"
+    },
+    {
+      "upvotes": 5,
+      "id": "avax"
+    },
+    {
+      "id": "dai",
+      "upvotes": 0
+    },
+    {
+      "id": "leo",
+      "upvotes": 0
+    },
+    {
+      "id": "bnb",
+      "upvotes": 0
+    },
+    {
+      "upvotes": 4,
+      "id": "ton"
+    },
+    {
+      "id": "okb",
+      "upvotes": 0
+    },
+    {
+      "id": "bsv",
+      "upvotes": 0
+    },
+    {
+      "id": "qnt",
+      "upvotes": 0
+    },
+    {
+      "id": "fil",
+      "upvotes": 0
+    },
+    {
+      "id": "bch",
+      "upvotes": 7
+    }
+  ],
   "portfolios": [
     {
       "id": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
@@ -264,6 +370,10 @@
           "amount": 1
         }
       ]
+    },
+    {
+      "id": "LKMKrAtXSdJTiAkedenydYKfkLKKBekWxK",
+      "cryptocurrencies": []
     }
   ]
 }

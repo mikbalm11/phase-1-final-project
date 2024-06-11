@@ -309,6 +309,55 @@ async function deletePortfolio() {
     }
 }
 
+async function upvote(cryptoSymbol) {
+    // called from evenet listener on the homepage
+    // populate the new column with the new increased value
+
+    const countElement = document.getElementById(`upvoteCount${cryptoSymbol}`);
+    let upvoteCount = parseInt(countElement.textContent);
+    upvoteCount++;
+    countElement.textContent = upvoteCount;
+
+    try {
+        const response = await fetch(`http://localhost:3000/upvoteCount`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch upvotes');
+        }
+        const upvotes = await response.json();
+
+        let crypto = upvotes.find(cryptos => cryptos.id === cryptoSymbol);
+        let updateResponse;
+
+        if (crypto) {
+            crypto.upvotes = upvoteCount;
+            updateResponse = await fetch(`http://localhost:3000/upvoteCount/${cryptoSymbol}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(crypto),
+            });
+        } else {
+            crypto = { id: cryptoSymbol, upvotes: upvoteCount };
+            upvotes.push(crypto);
+
+            updateResponse = await fetch(`http://localhost:3000/upvoteCount`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(crypto),
+            });
+        }
+
+        if (!updateResponse.ok) {
+            throw new Error('Failed to update upvotes');
+        }
+    } catch (error) {
+        console.error('Error updating upvotes:', error);
+    }
+}
+
 async function loadPage(page) {
     // Function to load pages based on page selection home or portfolio
     const content = document.getElementById('content');
@@ -323,26 +372,40 @@ async function loadPage(page) {
               <th>Name</th>
               <th>Price (USD)</th>
               <th>Daily Change (%)</th>
+              <th>Like Count</th>
+              <th>Like Button</th>
             </tr>
           </thead>
           <tbody id="cryptoTableBody"></tbody>
         </table>
       `;
 
-        const data = await fetchData(`${API_URL}/coins/markets?vs_currency=usd`);
-        if (data) {
+        const cryptoData = await fetchData(`${API_URL}/coins/markets?vs_currency=usd`);
+        const upvoteData = await fetchData('http://localhost:3000/upvoteCount');
+        if (cryptoData) {
             const tableBody = document.getElementById('cryptoTableBody');
-            data.slice(0, 20).forEach(crypto => {
+            cryptoData.slice(0, 20).forEach(crypto => {
                 const changePercent = parseFloat(crypto.price_change_percentage_24h).toFixed(2);
+                const upvoteCount = upvoteData.find(upvote => upvote.id === crypto.symbol)?.upvotes || 0;
+                //console.log(upvoteCount);
                 const row = document.createElement('tr');
                 row.innerHTML = `
-            <td><img src=${crypto.image} alt= ${crypto.symbol}> ${crypto.name}</td>
+            <td><img src=${crypto.image} alt=${crypto.symbol}> ${crypto.name}</td>
             <td>$${parseFloat(crypto.current_price).toFixed(2)}</td>
             <td class="${getChangeClass(changePercent)}">${changePercent}%</td>
+            <td id="upvoteCount${crypto.symbol}">${upvoteCount}</td>
+            <td><button type="button" id="upvoteBtn${crypto.symbol}">Upvote</button></td>
           `;
+                // have a button element on new td, with upvote count
+
                 tableBody.appendChild(row);
+                document.getElementById(`upvoteBtn${crypto.symbol}`).addEventListener('click', () => upvote(crypto.symbol))
             });
         }
+        // have an event listener to handle user click for upvotes/likes
+        // have it a callback function that would process the upvote
+        //document.getElementById(`upvoteBtn${crypto.symbol}`).addEventListener('click', upvote(this));
+
     } else if (page === 'portfolio') {
         content.innerHTML = `
         <h2>Portfolio Page</h2>
