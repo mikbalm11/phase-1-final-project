@@ -358,10 +358,89 @@ async function upvote(cryptoSymbol) {
     }
 }
 
+// fetch the api
+// have table populated by cryptos in desc order for value
+// somehow sort these before populating the table
+
+async function sortCrypto() {
+    
+    const content = document.getElementById('content');
+
+    content.innerHTML = `
+    <h2>Home Page</h2>
+    <p>Welcome to CryptoVault home page!</p>
+    <h3>Top Cryptocurrencies</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Price (USD)
+            <form id="sortBtn">
+            <button type="submit">Sort</button>
+            </form>
+            </th>
+          <th>Daily Change (%)</th>
+          <th>Like Count</th>
+          <th>Like Button</th>
+        </tr>
+      </thead>
+      <tbody id="cryptoTableBody"></tbody>
+    </table>
+    <div id="tooltip" class="tooltip"></div>
+  `;
+
+    const cryptoData = await fetchData(`${API_URL}/coins/markets?vs_currency=usd`);
+    const upvoteData = await fetchData('http://localhost:3000/upvoteCount');
+    //const tooltip = document.getElementById('tooltip');
+
+    if (cryptoData) {
+        const tableBody = document.getElementById('cryptoTableBody');
+        cryptoData.slice(0, 20).sort((a, b) => parseFloat(b.current_price) - parseFloat(a.current_price)).forEach(crypto => {
+            const changePercent = parseFloat(crypto.price_change_percentage_24h).toFixed(2);
+            const upvoteCount = upvoteData.find(upvote => upvote.id === crypto.symbol)?.upvotes || 0;
+            //console.log(upvoteCount);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+        <td><img src=${crypto.image} alt=${crypto.symbol}> ${crypto.name}</td>
+        <td>$${parseFloat(crypto.current_price).toFixed(2)}</td>
+        <td class="${getChangeClass(changePercent)}">${changePercent}%</td>
+        <td id="upvoteCount${crypto.symbol}">${upvoteCount}</td>
+        <td>
+          <form id="upvoteForm${crypto.symbol}">
+            <button type="submit">Upvote</button>
+          </form>
+        </td>
+      `;
+            // have a button element on new td, with upvote count
+
+            tableBody.appendChild(row);
+
+            // row.addEventListener('mouseover', (event) => {
+            //     tooltip.style.display = 'block';
+            //     tooltip.textContent = `Market Cap: $${crypto.market_cap.toLocaleString()} \nTotal Volume: ${crypto.total_volume.toLocaleString()} \nCirculating Supply: ${crypto.circulating_supply.toLocaleString()}`;
+            //     tooltip.style.left = `${event.pageX + 10}px`;
+            //     tooltip.style.top = `${event.pageY + 10}px`;
+            // });
+
+            // row.addEventListener('mouseout', () => {
+            //     tooltip.style.display = 'none';
+            // });
+
+            // document.getElementById(`upvoteForm${crypto.symbol}`).addEventListener('submit', (event) => {
+            //     event.preventDefault();
+            //     upvote(crypto.symbol);
+            // });
+        });
+    }
+
+}
+
 async function loadPage(page) {
     // Function to load pages based on page selection home or portfolio
     const content = document.getElementById('content');
     if (page === 'home') {
+
+        // add a button to sort cryptos in desc order
         content.innerHTML = `
         <h2>Home Page</h2>
         <p>Welcome to CryptoVault home page!</p>
@@ -370,7 +449,11 @@ async function loadPage(page) {
           <thead>
             <tr>
               <th>Name</th>
-              <th>Price (USD)</th>
+              <th>Price (USD)
+                <form id="sortBtn">
+                <button type="submit">Sort</button>
+                </form>
+                </th>
               <th>Daily Change (%)</th>
               <th>Like Count</th>
               <th>Like Button</th>
@@ -426,7 +509,14 @@ async function loadPage(page) {
         }
         // have an event listener to handle user click for upvotes/likes
         // have it a callback function that would process the upvote
-        //document.getElementById(`upvoteBtn${crypto.symbol}`).addEventListener('click', upvote(this));
+  
+        // have an event listener to handle sort
+        // callback func to handle sort
+
+        document.getElementById('sortBtn').addEventListener('submit', (event) => {
+            event.preventDefault();
+            sortCrypto();
+        });
 
     } else if (page === 'portfolio') {
         content.innerHTML = `
