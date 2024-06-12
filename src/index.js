@@ -378,10 +378,13 @@ async function loadPage(page) {
           </thead>
           <tbody id="cryptoTableBody"></tbody>
         </table>
+        <div id="tooltip" class="tooltip"></div>
       `;
 
         const cryptoData = await fetchData(`${API_URL}/coins/markets?vs_currency=usd`);
         const upvoteData = await fetchData('http://localhost:3000/upvoteCount');
+        const tooltip = document.getElementById('tooltip');
+
         if (cryptoData) {
             const tableBody = document.getElementById('cryptoTableBody');
             cryptoData.slice(0, 20).forEach(crypto => {
@@ -394,12 +397,31 @@ async function loadPage(page) {
             <td>$${parseFloat(crypto.current_price).toFixed(2)}</td>
             <td class="${getChangeClass(changePercent)}">${changePercent}%</td>
             <td id="upvoteCount${crypto.symbol}">${upvoteCount}</td>
-            <td><button type="button" id="upvoteBtn${crypto.symbol}">Upvote</button></td>
+            <td>
+              <form id="upvoteForm${crypto.symbol}">
+                <button type="submit">Upvote</button>
+              </form>
+            </td>
           `;
                 // have a button element on new td, with upvote count
 
                 tableBody.appendChild(row);
-                document.getElementById(`upvoteBtn${crypto.symbol}`).addEventListener('click', () => upvote(crypto.symbol))
+
+                row.addEventListener('mouseover', (event) => {
+                    tooltip.style.display = 'block';
+                    tooltip.textContent = `Market Cap: $${crypto.market_cap.toLocaleString()} \nTotal Volume: ${crypto.total_volume.toLocaleString()} \nCirculating Supply: ${crypto.circulating_supply.toLocaleString()}`;
+                    tooltip.style.left = `${event.pageX + 10}px`;
+                    tooltip.style.top = `${event.pageY + 10}px`;
+                });
+
+                row.addEventListener('mouseout', () => {
+                    tooltip.style.display = 'none';
+                });
+
+                document.getElementById(`upvoteForm${crypto.symbol}`).addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    upvote(crypto.symbol);
+                });
             });
         }
         // have an event listener to handle user click for upvotes/likes

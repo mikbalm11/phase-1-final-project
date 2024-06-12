@@ -1,19 +1,19 @@
 {
   "upvoteCount": [
     {
-      "upvotes": 11,
+      "upvotes": 16,
       "id": "btc"
     },
     {
-      "upvotes": 5,
+      "upvotes": 8,
       "id": "eth"
     },
     {
-      "upvotes": 4,
+      "upvotes": 6,
       "id": "usdt"
     },
     {
-      "upvotes": 2,
+      "upvotes": 6,
       "id": "bnb"
     },
     {
@@ -29,7 +29,7 @@
       "id": "ada"
     },
     {
-      "upvotes": 4,
+      "upvotes": 7,
       "id": "steth"
     },
     {
@@ -37,7 +37,7 @@
       "id": "doge"
     },
     {
-      "upvotes": 4,
+      "upvotes": 5,
       "id": "sol"
     },
     {
@@ -53,15 +53,15 @@
       "upvotes": 0
     },
     {
-      "upvotes": 4,
+      "upvotes": 8,
       "id": "shib"
     },
     {
-      "upvotes": 5,
+      "upvotes": 6,
       "id": "trx"
     },
     {
-      "upvotes": 5,
+      "upvotes": 6,
       "id": "wbtc"
     },
     {
@@ -87,22 +87,6 @@
     {
       "id": "okb",
       "upvotes": 0
-    },
-    {
-      "id": "bsv",
-      "upvotes": 0
-    },
-    {
-      "id": "qnt",
-      "upvotes": 0
-    },
-    {
-      "id": "fil",
-      "upvotes": 0
-    },
-    {
-      "id": "bch",
-      "upvotes": 7
     }
   ],
   "portfolios": [
